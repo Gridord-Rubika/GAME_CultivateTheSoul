@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: af0cca0dccc83b3428f13815411972af
+timeCreated: 1520784797
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Chinese Takeaway
+  fontNames:
+  - Chinese Takeaway
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
