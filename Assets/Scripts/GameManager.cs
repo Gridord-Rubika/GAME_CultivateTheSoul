@@ -6,7 +6,9 @@ public class GameManager : MonoBehaviour {
     
     public static GameManager instance;
 
-    float timeBeforeNextMining = 0;
+    float timeBeforeNextUpdate = 0;
+
+    private int _numberOfClickAfterLastUpdate;
 
     private void Awake()
     {
@@ -19,25 +21,33 @@ public class GameManager : MonoBehaviour {
         {
             instance = this;
         }
+
+        _numberOfClickAfterLastUpdate = 0;
+        NetworkManager.instance.UpdatePlayer();
     }
 
     private void Update()
     {
-        if(timeBeforeNextMining - Time.deltaTime <= 0)
+        if(timeBeforeNextUpdate - Time.deltaTime <= 0)
         {
-            timeBeforeNextMining = 0;
+            timeBeforeNextUpdate = 0;
         }
         else
         {
-            timeBeforeNextMining -= Time.deltaTime;
+            timeBeforeNextUpdate -= Time.deltaTime;
         }
     }
 
     public void TryMining()
     {
-        if(timeBeforeNextMining == 0)
+        if(timeBeforeNextUpdate == 0)
         {
 
         }
+    }
+
+    public void TrySendLatestClicks()
+    {
+
     }
 }

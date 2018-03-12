@@ -31,7 +31,12 @@ public class NetworkManager : MonoBehaviour {
     {
         return await DoConnectRequest("PUT", username, password);
     }
-    
+
+    public async Task<Response> UpdatePlayer(string username, string connectionToken)
+    {
+        return await DoGameplayRequest("POST", username, connectionToken);
+    }
+
     private async Task<Response> DoConnectRequest(string method, string username, string password)
     {
         Request loginRequest = new Request(method, "http://" + serverAddress + "/api/connect/" + username)
@@ -42,7 +47,6 @@ public class NetworkManager : MonoBehaviour {
 
         return (Response)await loginRequest.Send();
     }
-
 
     private async Task<Response> DoGameplayRequest(string method, string username, string connectionToken)
     {

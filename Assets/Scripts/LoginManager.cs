@@ -29,12 +29,6 @@ public class LoginManager : MonoBehaviour {
         }
     }
 
-    [ContextMenu("test")]
-    public void Test()
-    {
-        SceneManager.LoadScene(0);
-    }
-
     public async void TryLogin()
     {
         string username = usernameInputField.text;
