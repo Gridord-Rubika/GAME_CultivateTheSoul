@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class QuitScript : MonoBehaviour {
-
+    
     public void QuitGameScene()
     {
-        GameManager.instance.TrySendLatestClicks();
-        SceneManager.LoadScene(0);
+        GameManager.instance.CheckClicks();
+        GameManager.instance.gameCanvas.SetActive(false);
+        LoginManager.instance.loginCanvas.SetActive(true);
     }
 
     public void QuitApplication()
@@ -18,6 +18,9 @@ public class QuitScript : MonoBehaviour {
 
     private void OnApplicationQuit()
     {
-        GameManager.instance.TrySendLatestClicks();
+        if(GameManager.instance != null)
+        {
+            GameManager.instance.CheckClicks();
+        }
     }
 }

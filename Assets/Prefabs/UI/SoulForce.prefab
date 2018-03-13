@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 222387638031689606}
   - component: {fileID: 114068531886666222}
   m_Layer: 5
-  m_Name: SoulForceAsked
+  m_Name: MaxSoulForce
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

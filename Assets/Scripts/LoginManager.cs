@@ -10,15 +10,17 @@ public class LoginManager : MonoBehaviour {
 
     public static LoginManager instance;
 
+    public GameObject loginCanvas;
+
     public InputField usernameInputField;
     public InputField passwordInputField;
 
     public string connectionToken = "";
 
+    public Player player;
+
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
-
         if (instance != null)
         {
             Destroy(gameObject);
@@ -27,6 +29,7 @@ public class LoginManager : MonoBehaviour {
         {
             instance = this;
         }
+        loginCanvas.SetActive(true);
     }
 
     public async void TryLogin()
@@ -47,7 +50,7 @@ public class LoginManager : MonoBehaviour {
         }
 
         connectionToken = response.ReadAsString();
-        SceneManager.LoadScene(1);
+        TryGetPlayer();
     }
 
     public async void TryRegister()
@@ -67,7 +70,52 @@ public class LoginManager : MonoBehaviour {
         }
 
         connectionToken = response.ReadAsString();
-        SceneManager.LoadScene(1);
+        TryGetPlayer();
+    }
+
+
+    private async void TryGetPlayer()
+    {
+        string username = usernameInputField.text;
+        bool succeeded = false;
+
+        Response response = await NetworkManager.instance.GetPlayer(username, connectionToken);
+        
+        //Player found
+        if (response.status == 200)
+        {
+            player = JsonUtility.FromJson<Player>(response.Text);
+            succeeded = true;
+            loginCanvas.SetActive(false);
+            GameManager.instance.gameCanvas.SetActive(true);
+            GameManager.instance.Init();
+        }
+
+        //No player found but no problem, need to create a player
+        else if (response.status == 404)
+        {
+            Response responseCreate = await NetworkManager.instance.CreatePlayer(username, connectionToken);
+
+            //Player successfully created
+            if (responseCreate.status == 200)
+            {
+                player = JsonUtility.FromJson<Player>(response.Text);
+                succeeded = true;
+                loginCanvas.SetActive(false);
+                GameManager.instance.gameCanvas.SetActive(true);
+                GameManager.instance.Init();
+            }
+        }
+
+        if (!succeeded)
+        {
+            //If we are here, then it means there is problems and we can't do much
+            GameObject obj = GameObject.FindGameObjectWithTag("DisplayMessage");
+            if (obj != null)
+            {
+                obj.GetComponent<Text>().text = "A problem occured with the server and no player could be created or found.";
+            }
+        }
     }
 
     #region Validators
@@ -78,22 +126,18 @@ public class LoginManager : MonoBehaviour {
         if (username.Length == 0)
         {
             message = "Username field is empty";
-            return false;
         }
         else if (username.Length > 30)
         {
             message = "Username must be under 30 characters";
-            return false;
         }
         else if (!Regex.IsMatch(username, "^[A-Za-z0-9]+$"))
         {
             message = "Username must be alphanumerical characters only";
-            return false;
         }
         else if (password.Length == 0)
         {
             message = "Password is empty";
-            return false;
         }
 
         if(message != "")
@@ -103,6 +147,7 @@ public class LoginManager : MonoBehaviour {
             {
                 obj.GetComponent<Text>().text = message;
             }
+            return false;
         }
 
         return true;

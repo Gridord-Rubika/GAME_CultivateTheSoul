@@ -24,36 +24,64 @@ public class NetworkManager : MonoBehaviour {
 
     public async Task<Response> Login(string username, string password)
     {
-        return await DoConnectRequest("POST", username, password);
+        Request request = new Request("POST", "http://" + serverAddress + "/api/User/" + username)
+        {
+            Text = "\"" + password + "\""
+        };
+        request.AddHeader("Content-type", "application/json");
+
+        return (Response)await request.Send();
     }
 
     public async Task<Response> Register(string username, string password)
     {
-        return await DoConnectRequest("PUT", username, password);
-    }
-
-    public async Task<Response> UpdatePlayer(string username, string connectionToken)
-    {
-        return await DoGameplayRequest("POST", username, connectionToken);
-    }
-
-    private async Task<Response> DoConnectRequest(string method, string username, string password)
-    {
-        Request loginRequest = new Request(method, "http://" + serverAddress + "/api/connect/" + username)
+        Request request = new Request("PUT", "http://" + serverAddress + "/api/User/" + username)
         {
             Text = "\"" + password + "\""
         };
-        loginRequest.AddHeader("Content-type", "application/json");
+        request.AddHeader("Content-type", "application/json");
 
-        return (Response)await loginRequest.Send();
+        return (Response)await request.Send();
     }
 
-    private async Task<Response> DoGameplayRequest(string method, string username, string connectionToken)
+    public async Task<Response> GetPlayer(string username, string connectionToken)
     {
-        Request loginRequest = new Request(method, "http://" + serverAddress + "/api/connect/" + username);
-        loginRequest.AddHeader("Content-type", "application/json");
-        loginRequest.AddHeader("x-token", connectionToken);
+        Request request = new Request("GET", "http://" + serverAddress + "/api/Player/" + username);
+        request.AddHeader("Content-type", "application/json");
+        request.AddHeader("x-token", connectionToken);
 
-        return (Response) await loginRequest.Send();
+        return (Response)await request.Send();
+    }
+
+    public async Task<Response> CreatePlayer(string username, string connectionToken)
+    {
+        Request request = new Request("PUT", "http://" + serverAddress + "/api/Player/" + username);
+        request.AddHeader("Content-type", "application/json");
+        request.AddHeader("Content-length", "0");
+        request.AddHeader("x-token", connectionToken);
+
+        return (Response)await request.Send();
+    }
+
+    public async Task<Response> ClicksCheck(string username, string connectionToken, int nbClicks)
+    {
+        Request request = new Request("POST", "http://" + serverAddress + "/api/Gameplay/ClicksCheck/" + username)
+        {
+            Text = "\"" + nbClicks.ToString() + "\""
+        };
+        request.AddHeader("Content-type", "application/json");
+        request.AddHeader("x-token", connectionToken);
+
+        return (Response)await request.Send();
+    }
+
+    public async Task<Response> BreakThrough(string username, string connectionToken)
+    {
+        Request request = new Request("POST", "http://" + serverAddress + "/api/Gameplay/BreakThrough/" + username);
+        request.AddHeader("Content-type", "application/json");
+        request.AddHeader("Content-length", "0");
+        request.AddHeader("x-token", connectionToken);
+
+        return (Response)await request.Send();
     }
 }
